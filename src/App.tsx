@@ -1,10 +1,15 @@
 import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { SplashScreen } from './components/splash/SplashScreen';
 import { OnboardingScreen } from './components/onboarding/OnboardingScreen';
 import { AuthScreen } from './components/auth/AuthScreen';
 import { Layout } from './components/layout/Layout';
 import { Dashboard } from './components/dashboard/Dashboard';
+import { EventsPage } from './components/events/EventsPage';
+import { LostFoundPage } from './components/lostfound/LostFoundPage';
+import { CafeteriaPage } from './components/cafeteria/CafeteriaPage';
+import { NavigationPage } from './components/navigation/NavigationPage';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { ThemeProvider } from './contexts/ThemeContext';
 
@@ -46,9 +51,18 @@ const AppContent: React.FC = () => {
       ) : !user ? (
         <AuthScreen key="auth" />
       ) : (
-        <Layout key="main">
-          <Dashboard />
-        </Layout>
+        <Router key="main">
+          <Layout>
+            <Routes>
+              <Route path="/" element={<Dashboard />} />
+              <Route path="/events" element={<EventsPage />} />
+              <Route path="/lost-found" element={<LostFoundPage />} />
+              <Route path="/cafeteria" element={<CafeteriaPage />} />
+              <Route path="/navigation" element={<NavigationPage />} />
+              <Route path="*" element={<Navigate to="/" replace />} />
+            </Routes>
+          </Layout>
+        </Router>
       )}
     </AnimatePresence>
   );

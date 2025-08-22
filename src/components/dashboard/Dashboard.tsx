@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Calendar, Search, Coffee, MapPin, TrendingUp, Users, Clock, Star } from 'lucide-react';
 import { Card } from '../common/Card';
@@ -105,7 +106,8 @@ export const Dashboard: React.FC = () => {
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: index * 0.1 }}
             >
-              <Card hover className="p-6 group cursor-pointer">
+              <Link to={card.href}>
+                <Card hover className="p-6 group cursor-pointer">
                 <div className="flex items-center justify-between mb-4">
                   <div className={`w-12 h-12 rounded-lg bg-gradient-to-br ${card.color} flex items-center justify-center text-white shadow-lg`}>
                     <card.icon size={24} />
@@ -120,7 +122,8 @@ export const Dashboard: React.FC = () => {
                 <p className="text-gray-600 dark:text-gray-400 text-sm">
                   {card.description}
                 </p>
-              </Card>
+                </Card>
+              </Link>
             </motion.div>
           ))}
         </div>

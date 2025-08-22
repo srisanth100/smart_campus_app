@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import { 
   Home, 
   Calendar, 
@@ -12,11 +13,11 @@ import {
 import { useAuth } from '../../contexts/AuthContext';
 
 const navigation = [
-  { name: 'Dashboard', href: '/', icon: Home, current: true },
-  { name: 'Events', href: '/events', icon: Calendar, current: false },
-  { name: 'Lost & Found', href: '/lost-found', icon: Search, current: false },
-  { name: 'Cafeteria', href: '/cafeteria', icon: Coffee, current: false },
-  { name: 'Navigation', href: '/navigation', icon: MapPin, current: false },
+  { name: 'Dashboard', href: '/', icon: Home },
+  { name: 'Events', href: '/events', icon: Calendar },
+  { name: 'Lost & Found', href: '/lost-found', icon: Search },
+  { name: 'Cafeteria', href: '/cafeteria', icon: Coffee },
+  { name: 'Navigation', href: '/navigation', icon: MapPin },
 ];
 
 const bottomNavigation = [
@@ -26,6 +27,7 @@ const bottomNavigation = [
 
 export const Sidebar: React.FC = () => {
   const { user } = useAuth();
+  const location = useLocation();
 
   return (
     <div className="fixed left-0 top-16 h-full w-64 bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 z-30 hidden lg:block">
@@ -33,22 +35,22 @@ export const Sidebar: React.FC = () => {
         {/* Main Navigation */}
         <nav className="flex-1 px-4 pt-6 pb-4 space-y-1">
           {navigation.map((item) => (
-            <a
+            <Link
               key={item.name}
-              href={item.href}
+              to={item.href}
               className={`group flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors ${
-                item.current
+                location.pathname === item.href
                   ? 'bg-primary-100 dark:bg-primary-900 text-primary-700 dark:text-primary-300'
                   : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
             >
               <item.icon
                 className={`mr-3 flex-shrink-0 h-5 w-5 ${
-                  item.current ? 'text-primary-600 dark:text-primary-400' : 'text-gray-400 group-hover:text-gray-500'
+                  location.pathname === item.href ? 'text-primary-600 dark:text-primary-400' : 'text-gray-400 group-hover:text-gray-500'
                 }`}
               />
               {item.name}
-            </a>
+            </Link>
           ))}
           
           {user?.role === 'admin' && (
@@ -56,13 +58,13 @@ export const Sidebar: React.FC = () => {
               <p className="px-3 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider mb-3">
                 Admin
               </p>
-              <a
-                href="/admin"
+              <Link
+                to="/admin"
                 className="group flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
               >
                 <Shield className="mr-3 flex-shrink-0 h-5 w-5 text-gray-400 group-hover:text-gray-500" />
                 Admin Panel
-              </a>
+              </Link>
             </div>
           )}
         </nav>
@@ -70,14 +72,14 @@ export const Sidebar: React.FC = () => {
         {/* Bottom Navigation */}
         <div className="px-4 pb-6 space-y-1 border-t border-gray-200 dark:border-gray-700 pt-4">
           {bottomNavigation.map((item) => (
-            <a
+            <Link
               key={item.name}
-              href={item.href}
+              to={item.href}
               className="group flex items-center px-3 py-2 text-sm font-medium rounded-lg text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
             >
               <item.icon className="mr-3 flex-shrink-0 h-5 w-5 text-gray-400 group-hover:text-gray-500" />
               {item.name}
-            </a>
+            </Link>
           ))}
         </div>
       </div>

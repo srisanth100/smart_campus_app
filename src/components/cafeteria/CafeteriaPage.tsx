@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Coffee, Clock, Users, Star, ShoppingCart, Plus, Minus } from 'lucide-react';
+import { Coffee, Clock, Users, Star, ShoppingCart, Plus, Minus, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
 import { CafeteriaItem, QueueStatus } from '../../types';
@@ -101,6 +102,7 @@ export const CafeteriaPage: React.FC = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   const [cart, setCart] = useState<{ [key: string]: number }>({});
   const [showCart, setShowCart] = useState(false);
+  const navigate = useNavigate();
 
   const filteredItems = mockMenuItems.filter(item => 
     selectedCategory === 'all' || item.category === selectedCategory
@@ -154,6 +156,17 @@ export const CafeteriaPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
+          <div className="flex items-center gap-3 mb-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/')}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft size={16} />
+              Back to Dashboard
+            </Button>
+          </div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Cafeteria</h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1">Check queue status and pre-order your meals</p>
         </div>

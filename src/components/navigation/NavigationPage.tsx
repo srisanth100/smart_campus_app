@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { MapPin, Navigation, Search, Clock, Route } from 'lucide-react';
+import { MapPin, Navigation, Search, Clock, Route, ArrowLeft } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
 import { NavigationPoint } from '../../types';
@@ -63,6 +64,7 @@ export const NavigationPage: React.FC = () => {
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedLocation, setSelectedLocation] = useState<NavigationPoint | null>(null);
   const [currentLocation, setCurrentLocation] = useState<{ lat: number; lng: number } | null>(null);
+  const navigate = useNavigate();
 
   const filteredLocations = mockLocations.filter(location => {
     const matchesCategory = selectedCategory === 'all' || location.category === selectedCategory;
@@ -117,6 +119,17 @@ export const NavigationPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
+          <div className="flex items-center gap-3 mb-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/')}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft size={16} />
+              Back to Dashboard
+            </Button>
+          </div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Campus Navigation</h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1">Find your way around campus with interactive maps</p>
         </div>

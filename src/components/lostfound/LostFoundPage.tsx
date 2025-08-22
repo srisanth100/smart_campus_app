@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Plus, Filter, MapPin, Calendar, User, CheckCircle } from 'lucide-react';
+import { Search, Plus, Filter, MapPin, Calendar, User, CheckCircle, ArrowLeft, X, Upload } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { Card } from '../common/Card';
 import { Button } from '../common/Button';
 import { LostFoundItem } from '../../types';
@@ -78,6 +79,15 @@ export const LostFoundPage: React.FC = () => {
   const [selectedStatus, setSelectedStatus] = useState('all');
   const [searchQuery, setSearchQuery] = useState('');
   const [showReportModal, setShowReportModal] = useState(false);
+  const [reportForm, setReportForm] = useState({
+    title: '',
+    description: '',
+    category: 'electronics',
+    status: 'lost',
+    location: '',
+    contactInfo: ''
+  });
+  const navigate = useNavigate();
 
   const filteredItems = items.filter(item => {
     const matchesCategory = selectedCategory === 'all' || item.category === selectedCategory;
@@ -114,6 +124,17 @@ export const LostFoundPage: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
+          <div className="flex items-center gap-3 mb-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate('/')}
+              className="flex items-center gap-2"
+            >
+              <ArrowLeft size={16} />
+              Back to Dashboard
+            </Button>
+          </div>
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Lost & Found</h1>
           <p className="text-gray-600 dark:text-gray-400 mt-1">Help find lost items or report found items</p>
         </div>
@@ -261,10 +282,166 @@ export const LostFoundPage: React.FC = () => {
       </div>
 
       {filteredItems.length === 0 && (
+
+      {/* Report Item Modal */}
+      {showReportModal && (
+        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+          <motion.div
+            initial={{ scale: 0.9, opacity: 0 }}
+            animate={{ scale: 1, opacity: 1 }}
+            className="bg-white dark:bg-gray-800 rounded-xl p-6 w-full max-w-md max-h-[90vh] overflow-y-auto"
+          >
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="text-xl font-semibold text-gray-900 dark:text-white">Report Item</h3>
+              <button
+                onClick={() => setShowReportModal(false)}
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            <form onSubmit={(e) => {
+              e.preventDefault();
+              const newItem: LostFoundItem = {
+                id: Date.now().toString(),
+                title: reportForm.title,
+                description: reportForm.description,
+                category: reportForm.category as any,
+                status: reportForm.status as any,
+                location: reportForm.location,
+                dateReported: new Date().toISOString().split('T')[0],
+                reportedBy: 'Current User',
+                contactInfo: reportForm.contactInfo,
+                image: 'https://images.pexels.com/photos/1191710/pexels-photo-1191710.jpeg?auto=compress&cs=tinysrgb&w=400'
+              };
+              setItems(prev => [newItem, ...prev]);
+              setShowReportModal(false);
+              setReportForm({
+                title: '',
+                description: '',
+                category: 'electronics',
+                status: 'lost',
+                location: '',
+                contactInfo: ''
+              });
+            }} className="space-y-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Item Title
+                </label>
+                <input
+                  type="text"
+                  value={reportForm.title}
+                  onChange={(e) => setReportForm(prev => ({ ...prev, title: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  placeholder="e.g., iPhone 13 Pro"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Description
+                </label>
+                <textarea
+                  value={reportForm.description}
+                  onChange={(e) => setReportForm(prev => ({ ...prev, description: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  placeholder="Describe the item in detail..."
+                  rows={3}
+                  required
+                />
+              </div>
         <div className="text-center py-12">
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Category
+                  </label>
+                  <select
+                    value={reportForm.category}
+                    onChange={(e) => setReportForm(prev => ({ ...prev, category: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  >
+                    <option value="electronics">Electronics</option>
+                    <option value="clothing">Clothing</option>
+                    <option value="books">Books</option>
+                    <option value="accessories">Accessories</option>
+                    <option value="other">Other</option>
+                  </select>
+                </div>
           <Search size={48} className="mx-auto text-gray-400 mb-4" />
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                    Status
+                  </label>
+                  <select
+                    value={reportForm.status}
+                    onChange={(e) => setReportForm(prev => ({ ...prev, status: e.target.value }))}
+                    className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  >
+                    <option value="lost">Lost</option>
+                    <option value="found">Found</option>
+                  </select>
+                </div>
+              </div>
           <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-2">No items found</h3>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Location
+                </label>
+                <input
+                  type="text"
+                  value={reportForm.location}
+                  onChange={(e) => setReportForm(prev => ({ ...prev, location: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  placeholder="Where was it lost/found?"
+                  required
+                />
+              </div>
           <p className="text-gray-600 dark:text-gray-400">Try adjusting your search or filter criteria</p>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Contact Information
+                </label>
+                <input
+                  type="email"
+                  value={reportForm.contactInfo}
+                  onChange={(e) => setReportForm(prev => ({ ...prev, contactInfo: e.target.value }))}
+                  className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-primary-500 focus:border-primary-500 bg-white dark:bg-gray-800 text-gray-900 dark:text-white"
+                  placeholder="your.email@university.edu"
+                  required
+                />
+              </div>
+        </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Photo (Optional)
+                </label>
+                <div className="border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg p-6 text-center">
+                  <Upload size={24} className="mx-auto text-gray-400 mb-2" />
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Click to upload or drag and drop
+                  </p>
+                </div>
+              </div>
+      )}
+              <div className="flex gap-3 pt-4">
+                <Button
+                  type="button"
+                  variant="outline"
+                  fullWidth
+                  onClick={() => setShowReportModal(false)}
+                >
+                  Cancel
+                </Button>
+                <Button type="submit" variant="primary" fullWidth>
+                  Report Item
+                </Button>
+              </div>
+            </form>
+          </motion.div>
         </div>
       )}
     </div>
